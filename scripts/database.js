@@ -26,12 +26,18 @@ const database = {
         { id: 4, metal: "Platinum", price: 795.45 },
         { id: 5, metal: "Palladium", price: 1241.0 }
     ],
+    types: [
+        { id: 1, type: "Ring", multiplier: 1},
+        { id: 2, type: "Earring", multiplier: 2},
+        { id: 3, type: "Necklace", multiplier: 4}
+    ],
     customOrders: [
         {
             id: 1,
             metalId: 3,
             sizeId: 2,
             styleId: 3,
+            typeId: 1,
             timestamp: 1614659931693
         }
     ]
@@ -50,21 +56,37 @@ export const getMetals = () => {
     return database.metals.map(metal => ({...metal}))
 }
 
+export const getTypes = () => {
+    return database.types.map(type => ({...type}))
+}
+
 export const getOrders = () => {
     return database.customOrders.map(customOrder => ({...customOrder}))
 }
 
-//Export functions whose job is to set state
+export const getOrderBuilder = () => {
+    return database.orderBuilder
+}
+
+//Export functions whose job is to set and save state
 export const setMetal = (id) => {
     database.orderBuilder.metalId = id
+    document.dispatchEvent(new CustomEvent("stateChanged"))
 }
 
 export const setSize = (id) => {
     database.orderBuilder.sizeId = id
+    document.dispatchEvent(new CustomEvent("stateChanged"))
 }
 
 export const setStyle = (id) => {
     database.orderBuilder.styleId = id
+    document.dispatchEvent(new CustomEvent("stateChanged"))
+}
+
+export const setType = (id) => {
+    database.orderBuilder.typeId = id
+    document.dispatchEvent(new CustomEvent("stateChanged"))
 }
 
 //Define and export function to take choices stored in orderBuilder and implement
@@ -88,3 +110,4 @@ export const addCustomOrder = () => {
     //Broadcast a notification that the permanent state has changed
     document.dispatchEvent(new CustomEvent("stateChanged"))
 }
+

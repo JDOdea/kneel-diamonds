@@ -1,8 +1,20 @@
-import { getMetals, getOrders, getSizes, getStyles } from "./database.js"
+import { getMetals, getOrderBuilder, getOrders, getSizes, getStyles, getTypes, setType } from "./database.js"
 
 const metals = getMetals()
 const sizes = getSizes()
 const styles = getStyles()
+const types = getTypes()
+const orderBuilder = getOrderBuilder()
+
+document.addEventListener(
+    "change",
+    (e) => {
+        if (e.target.name === "type") {
+            setType(parseInt(e.target.value))
+        }
+    }
+)
+
 
 const buildOrderListItem = (order) => {
 
@@ -29,6 +41,14 @@ const buildOrderListItem = (order) => {
         }
     )
     totalCost += foundStyle.price
+
+    //FINDING TYPE MULTIPLIER
+    const foundType = types.find(
+        (type) => {
+            return type.id === order.typeId
+        }
+    )
+    totalCost *= foundType.multiplier
 
     const costString = totalCost.toLocaleString("en-US", {
         style: "currency",
@@ -57,3 +77,21 @@ export const Orders = () => {
     return html
 }
 
+// Define and export a function to generate type radio options
+export const Types = () => {
+    
+    let html = ""
+
+    for (const type of types) {
+        if (orderBuilder.typeId === type.id) {
+            html += `<input type="radio" name="type" value="${type.id}" checked /> ${type.type}`
+        }
+        else {
+            html += `<input type="radio" name="type" value="${type.id}" /> ${type.type}`
+        }
+
+        
+    }
+
+    return html
+}
